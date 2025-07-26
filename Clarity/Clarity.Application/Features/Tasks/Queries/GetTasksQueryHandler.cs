@@ -8,16 +8,19 @@ namespace Clarity.Application.Features.Tasks.Queries
     public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, List<TaskDto>>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public GetTasksQueryHandler(IApplicationDbContext context)
+        public GetTasksQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
         {
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<List<TaskDto>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
         {
             var tasks = await _context.TaskItems
-                .AsNoTracking() 
+                .AsNoTracking()
+                .Where(t => t.UserId == _currentUserService.UserId) 
                 .Select(t => new TaskDto
                 {
                     Id = t.Id,

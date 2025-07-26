@@ -7,10 +7,12 @@ namespace Clarity.Application.Features.Tasks.Commands
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, int>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public CreateTaskCommandHandler(IApplicationDbContext context)
+        public CreateTaskCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
         {
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<int> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -20,7 +22,8 @@ namespace Clarity.Application.Features.Tasks.Commands
                 Title = request.Title,
                 Notes = request.Notes,
                 DueDate = request.DueDate,
-                CreatedAt = DateTime.UtcNow 
+                CreatedAt = DateTime.UtcNow,
+                UserId = _currentUserService.UserId! 
             };
 
             _context.TaskItems.Add(task);

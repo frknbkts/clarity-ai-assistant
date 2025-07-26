@@ -2,6 +2,7 @@
 using Clarity.Application.Features.Tasks.Commands;
 using Clarity.Application.Features.Tasks.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -9,6 +10,7 @@ namespace Clarity.Api.Controllers
 {
     public record ParseTaskRequest(string Text);
 
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
