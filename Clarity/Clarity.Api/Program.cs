@@ -1,5 +1,6 @@
 using Clarity.Application.Common.Interfaces;
 using Clarity.Infrastructure.Persistence;
+using Clarity.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Clarity.Application.Features.Tasks.Commands.CreateTaskCommand).Assembly));
 
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<INlpService, OpenAiNlpService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
