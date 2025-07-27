@@ -13,21 +13,23 @@ namespace Clarity.Application.Features.Tasks.Commands
         private readonly ICurrentUserService _currentUserService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<CreateTaskCommandHandler> _logger; 
+        private readonly ILogger<CreateTaskCommandHandler> _logger;
+        private readonly ICalendarService _calendarService;
 
-        // Constructor güncellendi
         public CreateTaskCommandHandler(
             IApplicationDbContext context,
             ICurrentUserService currentUserService,
             IBackgroundJobClient backgroundJobClient,
             UserManager<ApplicationUser> userManager,
-            ILogger<CreateTaskCommandHandler> logger) 
+            ILogger<CreateTaskCommandHandler> logger,
+            ICalendarService calendarService) 
         {
             _context = context;
             _currentUserService = currentUserService;
             _backgroundJobClient = backgroundJobClient;
             _userManager = userManager;
-            _logger = logger; 
+            _logger = logger;
+            _calendarService = calendarService;
         }
 
         public async Task<int> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -84,6 +86,12 @@ namespace Clarity.Application.Features.Tasks.Commands
             else
             {
                 _logger.LogInformation("Task has no DueDate. No reminder will be scheduled.");
+            }
+
+            if (task.DueDate.HasValue)
+            {
+                var eventEndTime = task.DueDate.Value.AddHours(1);
+                await _calendarService.AddEventAsync(task.UserId, task.Title, task.Notes, task.DueDate.Value, eventEndTime);
             }
 
             return task.Id;

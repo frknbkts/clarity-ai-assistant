@@ -15,7 +15,6 @@ namespace Clarity.Api.Controllers
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        // Controller'ın Application katmanıyla konuşmasını sağlayacak olan aracı
         private readonly IMediator _mediator;
         private readonly INlpService _nlpService;
         private readonly ILogger<TasksController> _logger;
@@ -96,7 +95,6 @@ namespace Clarity.Api.Controllers
         {
             try
             {
-                // Input validation
                 if (request == null || string.IsNullOrWhiteSpace(request.Text))
                 {
                     return BadRequest("Request text cannot be empty.");

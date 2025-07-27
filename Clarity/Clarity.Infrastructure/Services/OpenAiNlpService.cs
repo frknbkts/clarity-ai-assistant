@@ -39,7 +39,6 @@ namespace Clarity.Infrastructure.Services
 
                 _logger.LogInformation("Processing text: {Text}", text);
 
-                // OpenAI Client oluşturma
                 var client = new OpenAIClient(apiKey);
                 var chatClient = client.GetChatClient(ModelName);
 
@@ -62,14 +61,12 @@ Rules:
                 _logger.LogDebug("System prompt: {SystemPrompt}", systemPrompt);
                 _logger.LogDebug("User prompt: {UserPrompt}", userPrompt);
 
-                // Mesajları hazırlama
                 var messages = new List<ChatMessage>
                 {
                     ChatMessage.CreateSystemMessage(systemPrompt),
                     ChatMessage.CreateUserMessage(userPrompt)
                 };
 
-                // Chat completion isteği - basit versiyon
                 var completionResult = await chatClient.CompleteChatAsync(messages, cancellationToken: cancellationToken);
 
                 if (completionResult?.Value?.Content?.Count > 0)
@@ -77,7 +74,6 @@ Rules:
                     var jsonResponse = completionResult.Value.Content[0].Text;
                     _logger.LogInformation("OpenAI Response: {Response}", jsonResponse);
 
-                    // JSON'u temizle (eğer markdown formatında dönerse)
                     var cleanJson = CleanJsonResponse(jsonResponse);
                     _logger.LogDebug("Cleaned JSON: {CleanJson}", cleanJson);
 
@@ -110,7 +106,6 @@ Rules:
 
         private string CleanJsonResponse(string response)
         {
-            // Markdown code block'larını temizle
             response = response.Trim();
 
             if (response.StartsWith("```json"))

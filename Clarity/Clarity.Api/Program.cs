@@ -59,7 +59,7 @@ builder.Services.AddHangfire(configuration => configuration
         TransactionTimeout = TimeSpan.FromMinutes(1),
     })));
 
-// 2. Hangfire'ýn görevleri iþleyecek olan sunucusunu ekle.
+builder.Services.AddTransient<ICalendarService, GoogleCalendarService>();
 builder.Services.AddHangfireServer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, Clarity.Api.Services.CurrentUserService>();
@@ -69,7 +69,6 @@ builder.Services.AddTransient<INotificationService, EmailNotificationService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    // Swagger'ýn "Authorize" butonunu ve kilit ikonlarýný göstermesi için Security Definition ekliyoruz.
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
